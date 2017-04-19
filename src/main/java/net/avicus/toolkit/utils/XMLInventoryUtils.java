@@ -107,14 +107,14 @@ public class XMLInventoryUtils {
         if (meta != null && meta.hasEnchants()) {
             builder.append("\n<enchantments>\n");
             meta.getEnchants().entrySet().forEach(l -> builder.append("<enchantment level=\"" +
-                    l.getValue() + "\">" + l.getKey().getName() + "</enchantment>\n"));
-            builder.append("</enchantments>\n");
+                    l.getValue() + "\">" + l.getKey().getName().toLowerCase().replace("_", " ") + "</enchantment>\n"));
+            builder.append("</enchantments>");
         }
 
         if (meta != null && meta.hasLore()) {
             builder.append("\n<lore>\n");
             meta.getLore().forEach(l -> builder.append("<line>" + l + "</line>\n"));
-            builder.append("</lore>\n");
+            builder.append("</lore>");
         }
 
         if (builder.toString().endsWith("\">"))

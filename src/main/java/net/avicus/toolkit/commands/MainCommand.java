@@ -20,19 +20,14 @@ public class MainCommand {
             throw new CommandException("Unknown help page. Max pages: 2");
         sender.sendMessage(StringUtils.padMessage("AtlasToolkit Help (" + args.getInteger(0, 1) + "/2)", "-", ChatColor.STRIKETHROUGH, ChatColor.GREEN));
         if (args.getInteger(0, 1) == 1) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Regions: ");
-            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit region load - Load an map.xml");
-            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit region show - Show a certain region");
-            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit region hide - Hide a certain region");
-            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit region parse - Parse the provided xml string");
             sender.sendMessage(ChatColor.LIGHT_PURPLE + "Item XML: ");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit xml inventory - Export your inventory to xml");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit xml item - Export your item to xml");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit xml parseitem - Load an item from xml");
         } else {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + "XML Generating: ");
+            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen point - Generate a point based on where you are currently standing");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen cuboid - Generate a cuboid from the WorldEdit selection");
-            sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen rectangle - Generate a rectangle from the WorldEdit selection");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen circle - Generate a circle based on your current position");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen cylinder - Generate a cylinder based on your current position");
             sender.sendMessage("    " + ChatColor.AQUA + "/toolkit gen upload - Upload all generated regions to DPaste");
