@@ -12,7 +12,7 @@ public class XMLUtils {
         String res = vec.getBlockX() + "," + vec.getBlockY() + "," + vec.getBlockZ();
 
         if (!allowDoubles)
-            res = res.replace(",0", "");
+            res = res.replace(".0", "");
         return res;
     }
 
@@ -20,14 +20,14 @@ public class XMLUtils {
         String res = vec.getBlockX() + "," + vec.getBlockZ();
 
         if (!allowDoubles)
-            res = res.replace(",0", "");
+            res = res.replace(".0", "");
         return res;
     }
 
     public static String weVectorToString(com.sk89q.worldedit.Vector vec, boolean allowDoubles) {
         String res = vec.getX() + "," + vec.getY() + "," + vec.getZ();
         if (!allowDoubles)
-            res = res.replace(",0", "");
+            res = res.replace(".0", "");
         return res;
     }
 }
