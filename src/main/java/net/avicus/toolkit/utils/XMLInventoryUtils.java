@@ -1,18 +1,17 @@
-package nl.thijsmolendijk.pgmtoolkit.utils;
+package net.avicus.toolkit.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class XMLInventoryUtils {
     public static String inventoryToXML(Player p) {
@@ -69,35 +68,15 @@ public class XMLInventoryUtils {
     public static String itemToXML(ItemStack stack, Integer slot, String tagName) {
         int amount = stack.getAmount();
         int damage = stack.getDurability();
-        StringBuilder builder = new StringBuilder("<"+tagName+" ").append("amount=\""+amount+"\" ");
+        final StringBuilder builder = new StringBuilder("<" + tagName + " ").append("amount=\"" + amount + "\" ");
         if (damage > 0)
-            builder.append("damage=\""+damage+"\" ");
+            builder.append(XMLUtils.generateAttribute("damage", damage, true));
 
-        //ENCHANTMENTS
-        if (stack.hasItemMeta() && stack.getItemMeta().hasEnchants())
-            builder.append("enchantment=\"");
-        for (Entry<Enchantment, Integer> enchant : stack.getEnchantments().entrySet()) {
-            builder.append(enchant.getKey().getName().toString().replace("_", " ").toLowerCase()+":"+enchant.getValue()+";");
-        }
-        if (builder.toString().charAt(builder.length()-1) == ';') {
-            //Remove the last comma
-            builder = new StringBuilder(builder.substring(0, builder.length()-1));
-            //Add a closing "
-            builder.append("\" ");
-        }
-        //END ENCHANTMENTS
-
-        //NAME AND LORE
-        ItemMeta meta = stack.getItemMeta();
+        final ItemMeta meta = stack.getItemMeta();
         if (meta != null && meta.hasDisplayName()) {
-            builder.append("name=\""+meta.getDisplayName().replace("??", "`")+"\" ");
+            builder.append(XMLUtils.generateAttribute("name", meta.getDisplayName().replace("§", "`"), true));
         }
-        if (meta != null && meta.hasLore()) {
-            builder.append("lore=\""+Joiner.on("|").join(meta.getLore()).replace("??", "`")+"\" ");
-        }
-        //END NAME AND LORE
 
-        //LEATHER COLOR
         if (stack.getType().toString().startsWith("LEATHER_")) {
             LeatherArmorMeta leatherMeta = (LeatherArmorMeta) stack.getItemMeta();
             String hex = String.format("%02x%02x%02x", leatherMeta.getColor().getRed(), leatherMeta.getColor().getGreen(), leatherMeta.getColor().getBlue());
@@ -105,21 +84,45 @@ public class XMLInventoryUtils {
                 for (int i = 0; i < (6 - hex.length()); i++)
                     hex = "0" + hex;
             }
-            builder.append("color=\""+hex+"\" ");
+            builder.append(XMLUtils.generateAttribute("color", hex, true));
         }
-        //END LEATHER COLOR
 
-        //SLOT
         if (slot != -1)
-            builder.append("slot=\""+slot+"\" ");
-        //END SLOT
+            builder.append(XMLUtils.generateAttribute("slot", slot, true));
 
-        builder = new StringBuilder(builder.toString().trim());
+        builder.append(XMLUtils.generateAttribute("material", stack.getType().name().toLowerCase().replace('_', ' '), false));
+
         builder.append(">");
 
-        builder.append(stack.getType().toString().replace("_", " ").toLowerCase());
-        builder.append("</"+tagName+">");
-        return builder.toString();
+        if (meta instanceof PotionMeta && ((PotionMeta) meta).hasCustomEffects()) {
+            builder.append("\n<effects>\n");
+            ((PotionMeta) meta).getCustomEffects().forEach(e ->
+                    builder.append("<effect " + XMLUtils.generateAttribute("amplifier", e.getAmplifier(), true) +
+                            XMLUtils.generateAttribute("duration", e.getDuration(), true) + ">" +
+                            e.getType().getName().toLowerCase().replace("_", " ") + "</effect>\n")
+            );
+            builder.append("</effects>");
+        }
+
+        if (meta != null && meta.hasEnchants()) {
+            builder.append("\n<enchantments>\n");
+            meta.getEnchants().entrySet().forEach(l -> builder.append("<enchantment level=\"" +
+                    l.getValue() + "\">" + l.getKey().getName() + "</enchantment>\n"));
+            builder.append("</enchantments>\n");
+        }
+
+        if (meta != null && meta.hasLore()) {
+            builder.append("\n<lore>\n");
+            meta.getLore().forEach(l -> builder.append("<line>" + l + "</line>\n"));
+            builder.append("</lore>\n");
+        }
+
+        if (builder.toString().endsWith("\">"))
+            return builder.toString().replace(">", "/>");
+        else {
+            builder.append("\n</" + tagName + ">");
+            return builder.toString();
+        }
     }
 
 }

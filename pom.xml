@@ -1,93 +1,115 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>PGMToolkit</groupId>
-	<artifactId>PGMToolkit</artifactId>
-	<version>0.0.1</version>
+
+	<groupId>net.avicus</groupId>
+	<artifactId>AtlasToolkit</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<scm>
+		<connection>scm:git://github.com/AustinLMayes/AtlasToolKit.git</connection>
+		<developerConnection>scm:git:ssh://github.com/AustinLMayes/AtlasToolKit.git</developerConnection>
+		<url>https://github.com/AustinLMayes/AtlasToolKit</url>
+	</scm>
+
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 		<repository>
-			<id>repo.oc.tc</id>
-			<url>https://repo.oc.tc/content/groups/public</url>
+			<id>avicus-public</id>
+			<url>https://repo.avicus.net/content/groups/public</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.6.2-R0.1-SNAPSHOT</version>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.8.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sk89q</groupId>
-			<artifactId>command-framework-core</artifactId>
-			<version>0.4</version>
+			<groupId>net.avicus</groupId>
+			<artifactId>compendium-bukkit</artifactId>
+			<version>1.2-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sk89q</groupId>
-			<artifactId>worldedit</artifactId>
-			<version>5.5.6</version>
+			<groupId>com.sk89q.worldedit</groupId>
+			<artifactId>worldedit-core</artifactId>
+			<version>6.1.4-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sk89q.worldedit</groupId>
+			<artifactId>worldedit-bukkit</artifactId>
+			<version>6.1.5</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<defaultGoal>clean package</defaultGoal>
-		<!-- Resources -->
 		<resources>
 			<resource>
-				<targetPath>.</targetPath>
-				<directory>${basedir}/src/main/resources/</directory>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
-				<includes>
-					<include>*.yml</include>
-				</includes>
 			</resource>
 		</resources>
-		<!-- Plugins -->
 		<plugins>
-			<!-- Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.3</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<showDeprecation>true</showDeprecation>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
-						<configuration>
-							<shadedArtifactAttached>false</shadedArtifactAttached>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<artifactSet>
-								<excludes>
-									<exclude>org.bukkit:bukkit</exclude>
-									<exclude>com.sk89q:worldedit</exclude>
-									<exclude>com.sk89q:jchronic</exclude>
-									<exclude>junit:junit</exclude>
-									<exclude>rhino:js</exclude>
-									<exclude>de.schlichtherle:truezip</exclude>
-								</excludes>
-							</artifactSet>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<artifactSet>
+						<includes>
+							<include>com.sk89q:command-framework-bukkit</include>
+						</includes>
+					</artifactSet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<failOnNoGitDirectory>true</failOnNoGitDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
