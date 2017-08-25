@@ -17,57 +17,62 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AtlasToolkit extends JavaPlugin {
-    private CommandsManager<CommandSender> commands;
 
-    public static WorldEditPlugin getWorldEdit() {
-        WorldEditPlugin worldEditPlugin = null;
-        worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if (worldEditPlugin == null) {
-            Validate.notNull(null, "WorldEdit is null. Please install WorldEdit if you want to make use of its features.");
-        }
-        return worldEditPlugin;
-    }
+  private CommandsManager<CommandSender> commands;
 
-    @Override
-    public void onEnable() {
-        this.setupCommands();
-        this.getServer().getPluginManager().registerEvents(new PlayerManager(), this);
+  public static WorldEditPlugin getWorldEdit() {
+    WorldEditPlugin worldEditPlugin = null;
+    worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager()
+        .getPlugin("WorldEdit");
+    if (worldEditPlugin == null) {
+      Validate.notNull(null,
+          "WorldEdit is null. Please install WorldEdit if you want to make use of its features.");
     }
+    return worldEditPlugin;
+  }
 
-    private void setupCommands() {
-        this.commands = new CommandsManager<CommandSender>() {
-            @Override
-            public boolean hasPermission(CommandSender sender, String perm) {
-                return sender instanceof ConsoleCommandSender || sender.hasPermission(perm);
-            }
-        };
-        CommandsManagerRegistration cmdRegister = new CommandsManagerRegistration(this, this.commands);
-        cmdRegister.register(MainCommand.MainParentCommand.class);
-    }
+  @Override
+  public void onEnable() {
+    this.setupCommands();
+    this.getServer().getPluginManager().registerEvents(new PlayerManager(), this);
+  }
 
-    @Override
-    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String commandLabel, String[] args) {
-        try {
-            this.commands.execute(cmd.getName(), args, sender, sender);
-        } catch (CommandPermissionsException e) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission.");
-        } catch (MissingNestedCommandException e) {
-            sender.sendMessage(ChatColor.RED + e.getUsage());
-        } catch (CommandUsageException e) {
-            sender.sendMessage(ChatColor.RED + e.getMessage());
-            sender.sendMessage(ChatColor.RED + e.getUsage());
-        } catch (WrappedCommandException e) {
-            if (e.getCause() instanceof NumberFormatException) {
-                sender.sendMessage(ChatColor.RED + "Number expected, string received instead.");
-            } else if (e.getCause() instanceof IllegalArgumentException) {
-                sender.sendMessage(ChatColor.RED + e.getMessage().replace("java.lang.IllegalArgumentException: ", ""));
-            } else {
-                sender.sendMessage(ChatColor.RED + "An error has occurred. See console.");
-                e.printStackTrace();
-            }
-        } catch (CommandException e) {
-            sender.sendMessage(ChatColor.RED + e.getMessage());
-        }
-        return true;
+  private void setupCommands() {
+    this.commands = new CommandsManager<CommandSender>() {
+      @Override
+      public boolean hasPermission(CommandSender sender, String perm) {
+        return sender instanceof ConsoleCommandSender || sender.hasPermission(perm);
+      }
+    };
+    CommandsManagerRegistration cmdRegister = new CommandsManagerRegistration(this, this.commands);
+    cmdRegister.register(MainCommand.MainParentCommand.class);
+  }
+
+  @Override
+  public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd,
+      String commandLabel, String[] args) {
+    try {
+      this.commands.execute(cmd.getName(), args, sender, sender);
+    } catch (CommandPermissionsException e) {
+      sender.sendMessage(ChatColor.RED + "You don't have permission.");
+    } catch (MissingNestedCommandException e) {
+      sender.sendMessage(ChatColor.RED + e.getUsage());
+    } catch (CommandUsageException e) {
+      sender.sendMessage(ChatColor.RED + e.getMessage());
+      sender.sendMessage(ChatColor.RED + e.getUsage());
+    } catch (WrappedCommandException e) {
+      if (e.getCause() instanceof NumberFormatException) {
+        sender.sendMessage(ChatColor.RED + "Number expected, string received instead.");
+      } else if (e.getCause() instanceof IllegalArgumentException) {
+        sender.sendMessage(
+            ChatColor.RED + e.getMessage().replace("java.lang.IllegalArgumentException: ", ""));
+      } else {
+        sender.sendMessage(ChatColor.RED + "An error has occurred. See console.");
+        e.printStackTrace();
+      }
+    } catch (CommandException e) {
+      sender.sendMessage(ChatColor.RED + e.getMessage());
     }
+    return true;
+  }
 }
